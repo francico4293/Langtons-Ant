@@ -13,10 +13,11 @@ class LangtonsAnt(object):
         2.) At a black square, turn 90 degrees counter-clockwise, turn the color of
             the square white, move forward one unit.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """Creates a LangtonsAnt object."""
         self._running = True
         self._board = Board()
+        self._states = self._init_states()
 
     def start(self):
         """Begins running Langton's Ant according to the established rules."""
@@ -27,21 +28,24 @@ class LangtonsAnt(object):
             self._board.update()
             pygame.display.update()
 
+    def _init_states(self) -> dict:
+        pass
+
 
 class Board(object):
     """Represents a Board with a square lattice of black and white cells used for running
     Langton's Ant."""
-    def __init__(self):
+    def __init__(self) -> None:
         """Creates a Board object"""
         self._screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self._screen.fill(WHITE)
         pygame.display.set_caption("Langton's Ant")
 
-    def update(self):
+    def update(self) -> None:
         """Updates the state of the Board."""
         self._draw_grid()
 
-    def _draw_grid(self):
+    def _draw_grid(self) -> None:
         """Draws the square grid used in Langton's Ant."""
         # draw the grid boarder
         pygame.draw.rect(self._screen,
@@ -58,6 +62,7 @@ class Board(object):
                              (coord, GRID_HEIGHT),
                              width=2
                              )
+
             # horizontal grid lines
             pygame.draw.line(self._screen,
                              BLACK,
