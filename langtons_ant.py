@@ -11,6 +11,7 @@ class LangtonsAnt(object):
         """Creates a LangtonsAnt object."""
         self._running = True
         self._board = Board()
+        self._ant = Ant(self._board)
 
     def start(self):
         """Runs LangtonsAnt up to 10,500 iterations."""
@@ -29,10 +30,20 @@ class Board(object):
         self._board = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self._board.fill(WHITE)
         pygame.display.set_caption("Langton's Ant")
+        self._square_colors = self._init_square_colors()
 
     def update(self):
         """Updates the state of the Board."""
         self._draw_grid()
+
+    def get_board(self):
+        """Returns the Pygame Surface used as the Board."""
+        return self._board
+
+    def get_square_colors(self):
+        """Returns the dictionary that contains the color of each square on
+        the Board"""
+        return self._square_colors
 
     def _draw_grid(self):
         """Draws the grid on the Board that the Ant will walk in."""
@@ -63,12 +74,26 @@ class Board(object):
                              width=1
                              )
 
+    @staticmethod
+    def _init_square_colors() -> dict:
+        """Initializes a dictionary containing the color of each square on the
+        Board."""
+        square_colors = {}
+        for row in range(ROWS):
+            for col in range(COLS):
+                square_colors[(row, col)] = WHITE
+        return square_colors
+
 
 class Ant(object):
     """Represents an Ant that moves according to the rules of Langton's Ant."""
-    def __init__(self):
+    def __init__(self, board: Board):
         """Creates an Ant object."""
         self._position = (4, 4)
+        self._board = board
+
+    def move(self):
+        pass
 
 
 # General Testing and Drive Code:
