@@ -2,9 +2,9 @@
 # Description: General settings and constants for langtons_ant.py
 
 # Dimensions:
-SCREEN_WIDTH, SCREEN_HEIGHT = 500, 500
+SCREEN_WIDTH, SCREEN_HEIGHT = 500, 550
 GRID_LEFT, GRID_TOP = 0, 0
-GRID_WIDTH, GRID_HEIGHT = SCREEN_WIDTH, SCREEN_HEIGHT
+GRID_WIDTH, GRID_HEIGHT = 500, 500
 SQUARE_WIDTH = 50
 
 # Colors:
