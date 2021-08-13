@@ -2,6 +2,7 @@
 # Description: An implementation of Langton's Ant using Pygame
 
 import pygame
+import time
 from settings import *
 
 
@@ -12,15 +13,20 @@ class LangtonsAnt(object):
         self._running = True
         self._board = Board()
         self._ant = Ant(self._board)
+        self._iteration = 0
 
-    def start(self):
+    def start(self) -> None:
         """Runs LangtonsAnt up to 10,500 iterations."""
         while self._running:  # main simulation loop
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self._running = False
-            self._board.update()  # update the state of the Board
+            if self._iteration <= 10500:
+                self._ant.update()  # update the position of the Ant
+                self._board.update()  # update the state of the Board
+                self._iteration += 1  # increment iteration count
             pygame.display.update()  # update the display
+            time.sleep(0.15)
 
 
 class Board(object):
@@ -32,20 +38,32 @@ class Board(object):
         pygame.display.set_caption("Langton's Ant")
         self._square_colors = self._init_square_colors()
 
-    def update(self):
+    def update(self) -> None:
         """Updates the state of the Board."""
         self._draw_grid()
 
-    def get_board(self):
+    def get_board(self) -> any:
         """Returns the Pygame Surface used as the Board."""
         return self._board
 
-    def get_square_colors(self):
+    def get_square_colors(self) -> dict:
         """Returns the dictionary that contains the color of each square on
         the Board"""
         return self._square_colors
 
-    def _draw_grid(self):
+    def flip_color(self, position: tuple, color: tuple) -> None:
+        """Flips the color of the current square - if the color of the square is
+        white, it will be colored black, otherwise if the color of the square is
+        black, it will be colored white."""
+        pygame.draw.rect(self._board,
+                         color,
+                         pygame.Rect(
+                             position[0] * SQUARE_WIDTH,
+                             position[1] * SQUARE_HEIGHT,
+                             SQUARE_WIDTH, SQUARE_HEIGHT)
+                         )
+
+    def _draw_grid(self) -> None:
         """Draws the grid on the Board that the Ant will walk in."""
         # draw grid outline
         pygame.draw.rect(self._board,
@@ -90,10 +108,70 @@ class Ant(object):
     def __init__(self, board: Board):
         """Creates an Ant object."""
         self._position = (4, 4)
+        self._heading = 'N'
         self._board = board
 
-    def move(self):
-        pass
+    def update(self) -> None:
+        """Updates the position of the Ant on the Board."""
+        # move the Ant
+        self._move()
+
+        # update the position of the Ant
+        pygame.draw.circle(self._board.get_board(),
+                           RED,
+                           ((self._position[0] * SQUARE_WIDTH) + (SQUARE_WIDTH / 2),
+                            self._position[1] * SQUARE_HEIGHT + (SQUARE_HEIGHT / 2)),
+                           15
+                           )
+
+    def _move(self) -> None:
+        """Moves the Ant based on the movement rules of Langton's Ant."""
+        square_colors = self._board.get_square_colors()
+
+        if self._heading == 'N':
+            if square_colors[self._position] == WHITE:
+                square_colors[self._position] = BLACK
+                self._board.flip_color(self._position, BLACK)
+                self._position = (self._position[0] + 1, self._position[1])
+                self._heading = 'E'
+            else:
+                square_colors[self._position] = WHITE
+                self._board.flip_color(self._position, WHITE)
+                self._position = (self._position[0] - 1, self._position[1])
+                self._heading = 'W'
+        elif self._heading == 'E':
+            if square_colors[self._position] == WHITE:
+                square_colors[self._position] = BLACK
+                self._board.flip_color(self._position, BLACK)
+                self._position = (self._position[0], self._position[1] + 1)
+                self._heading = 'S'
+            else:
+                square_colors[self._position] = WHITE
+                self._board.flip_color(self._position, WHITE)
+                self._position = (self._position[0], self._position[1] - 1)
+                self._heading = 'N'
+        elif self._heading == 'S':
+            if square_colors[self._position] == WHITE:
+                square_colors[self._position] = BLACK
+                self._board.flip_color(self._position, BLACK)
+                self._position = (self._position[0] - 1, self._position[1])
+                self._heading = 'W'
+            else:
+                square_colors[self._position] = WHITE
+                self._board.flip_color(self._position, WHITE)
+                self._position = (self._position[0] + 1, self._position[1])
+                self._heading = 'E'
+        else:
+            if square_colors[self._position] == WHITE:
+                square_colors[self._position] = BLACK
+                self._board.flip_color(self._position, BLACK)
+                self._position = (self._position[0], self._position[1] - 1)
+                self._heading = 'N'
+            else:
+                square_colors[self._position] = WHITE
+                self._board.flip_color(self._position, WHITE)
+                self._position = (self._position[0], self._position[1] + 1)
+                self._heading = 'S'
 
 
 # General Testing and Drive Code:
