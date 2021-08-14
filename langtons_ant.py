@@ -33,7 +33,7 @@ class LangtonsAnt(object):
         # create a surface to overwrite current iteration with
         iter_surface = pygame.Surface((GRID_WIDTH, SCREEN_HEIGHT - GRID_HEIGHT))
         iter_surface.fill(WHITE)
-        self._board.get_board().blit(iter_surface, (GRID_LEFT, GRID_HEIGHT))
+        self._board.get_board().blit(iter_surface, (GRID_LEFT, GRID_HEIGHT + 2))
 
         # display the current iteration number
         font = pygame.font.SysFont('Times New Roman', 30)
