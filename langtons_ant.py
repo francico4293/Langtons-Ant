@@ -2,7 +2,6 @@
 # Description: An implementation of Langton's Ant using Pygame
 
 import pygame
-import time
 from settings import *
 
 
@@ -14,19 +13,32 @@ class LangtonsAnt(object):
         self._board = Board()
         self._ant = Ant(self._board)
         self._iteration = 0
+        pygame.font.init()
 
     def start(self) -> None:
-        """Runs LangtonsAnt up to 10,500 iterations."""
+        """Runs LangtonsAnt simulation."""
         while self._running:  # main simulation loop
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self._running = False
-            if self._iteration <= 10500:
+            if self._ant.get_position()[0] >= 0:
                 self._ant.update()  # update the position of the Ant
                 self._board.update()  # update the state of the Board
+                self.display_iterations()  # show the current iteration count
                 self._iteration += 1  # increment iteration count
             pygame.display.update()  # update the display
-            time.sleep(0.15)
+
+    def display_iterations(self):
+        """Displays the current iteration number."""
+        # create a surface to overwrite current iteration with
+        iter_surface = pygame.Surface((GRID_WIDTH, SCREEN_HEIGHT - GRID_HEIGHT))
+        iter_surface.fill(WHITE)
+        self._board.get_board().blit(iter_surface, (GRID_LEFT, GRID_HEIGHT))
+
+        # display the current iteration number
+        font = pygame.font.SysFont('Times New Roman', 30)
+        iterations = font.render('Iteration: {}'.format(self._iteration), False, BLACK)
+        self._board.get_board().blit(iterations, (0, SCREEN_HEIGHT - 45))
 
 
 class Board(object):
@@ -107,7 +119,7 @@ class Ant(object):
     """Represents an Ant that moves according to the rules of Langton's Ant."""
     def __init__(self, board: Board):
         """Creates an Ant object."""
-        self._position = (4, 4)
+        self._position = (40, 40)
         self._heading = 'N'
         self._board = board
 
@@ -121,8 +133,12 @@ class Ant(object):
                            RED,
                            ((self._position[0] * SQUARE_WIDTH) + (SQUARE_WIDTH / 2),
                             self._position[1] * SQUARE_HEIGHT + (SQUARE_HEIGHT / 2)),
-                           15
+                           2
                            )
+
+    def get_position(self) -> tuple:
+        """Returns the current position of the Ant."""
+        return self._position
 
     def _move(self) -> None:
         """Moves the Ant based on the movement rules of Langton's Ant."""
